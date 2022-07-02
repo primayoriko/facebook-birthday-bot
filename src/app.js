@@ -26,7 +26,12 @@ async function initWebhookAppServer(app) {
 
 	addMessageAPIRoutes(app);
 
-	var listener = app.listen(process.env.PORT, function() {
+	const listener = app.listen(process.env.PORT, function(err) {
+		if (err) {
+			console.log(err);
+		}
 		console.log("Your app is listening on port " + listener.address().port);
 	});
 }
+
+module.exports = app;

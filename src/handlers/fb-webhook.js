@@ -33,24 +33,34 @@ async function handleWebhook(req, res) {
 					webhookEvent = entry.messaging[0],
 					senderPsid = webhookEvent.sender.id,
 					validEvent = false,
-					response = {};
-				emergencyPsid = senderPsid;
+					response = {},
+					textToSave;
+				// console.log(webhookEvent, senderPsid);
 
-				if (webhookEvent.message && webhookEvent.message.text) {
-					const messageText = webhookEvent.message.text;
-					const regex = /^\d{4}-\d{2}-\d{2}$/;
+				if (!webhookEvent.message || !webhookEvent.message.is_echo) {
+					emergencyPsid = senderPsid;
+				}
+
+				if (webhookEvent.message && webhookEvent.message.text && !webhookEvent.message.is_echo) {
+					const 
+						messageText = webhookEvent.message.text,
+						regex = /^\d{4}-\d{2}-\d{2}$/;
+
+					textToSave = messageText;
 
 					if (messageText === "Hi") {
 						response.text = "What is your first name?";
 					} else if (messageText.match(regex) === null) {
-						response.text = "When is your birth date? please input in YYYY-MM-DD format";
+						response.text = "When is your birth date? Please input in YYYY-MM-DD format";
 					} else {
 						const positive_response_payload = JSON.stringify({
 							"findNextDate": true,
-							"date": messageText
+							"date": messageText,
+							"text": "yes"
 						});
 						const negative_response_payload = JSON.stringify({
 							"findNextDate": false,
+							"text": "no"
 						});
 						response = {
 							"attachment": {
@@ -93,12 +103,16 @@ async function handleWebhook(req, res) {
 					}
 				
 					validEvent = true;
+					textToSave = payload.text;
 				}
 
 				if (validEvent) {
 					try {
+						await insertMessage(senderPsid, textToSave);
 						await sendReply(senderPsid, response);
-					} catch(err) { }
+					} catch(err) { 
+						console.log(err);
+					}
 					break;
 				}
 			}

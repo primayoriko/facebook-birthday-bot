@@ -1,4 +1,4 @@
-const { getProfileName } = require("../fb-messenger"),
+const { getProfileName } = require("../api/fb"),
 	{ getMessagesFromDB, getMessageByIDFromDB, insertMessageToDB } 
         = require("../../repositories/postgres/message"),
 	{ getUsers, getUserByPSID, insertUser } 

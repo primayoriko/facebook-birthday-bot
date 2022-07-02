@@ -4,10 +4,11 @@
   "description": "facebook bot for asking question that related to birthday",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node ./test.js",
     "start": "nodemon ./src/app.js",
     "lint": "eslint ./src",
-    "lint-fix": "eslint ./src --fix"
+    "lint-fix": "eslint ./src --fix",
+    "migrate-postgres": "node ./src/migrations/postgres/index.js"
   },
   "keywords": [
     "facebook",

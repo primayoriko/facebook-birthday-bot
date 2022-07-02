@@ -4,10 +4,13 @@
   "description": "facebook bot for asking question that related to birthday",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run migrate-down-postgres && npm run migrate-up-postgres && mocha './test/**/*.js' --exit",
     "start": "nodemon ./src/app.js",
-    "lint": "eslint ./src",
-    "lint-fix": "eslint ./src --fix"
+    "start-prod": "node ./src/app.js",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "migrate-up-postgres": "node ./src/migrations/postgres/up.js",
+    "migrate-down-postgres": "node ./src/migrations/postgres/down.js"
   },
   "keywords": [
     "facebook",
@@ -16,8 +19,10 @@
   "author": "primayoriko",
   "license": "ISC",
   "devDependencies": {
+    "chai": "^4.3.6",
     "eslint": "^8.9.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "supertest": "^6.2.4"
   },
   "dependencies": {
     "axios": "^0.27.2",

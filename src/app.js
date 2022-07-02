@@ -26,7 +26,7 @@ async function initWebhookAppServer(app) {
 
 	addMessageAPIRoutes(app);
 
-	const listener = app.listen(process.env.PORT, function(err) {
+	const listener = app.listen(process.env.SERVER_PORT, function(err) {
 		if (err) {
 			console.log(err);
 		}

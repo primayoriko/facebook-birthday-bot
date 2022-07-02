@@ -15,11 +15,12 @@ async function getMessageByID(id) {
 }
 
 async function getSummary() {
-	const { messages } = await getMessagesFromDB();
-	const { users } = await getUsers();
+	const 
+		users = await getUsers(),
+		{ rows } = await getMessagesFromDB(),
+		messagesMap = {};
 
-	const messagesMap = {};
-	messages.forEach(message => {
+	rows.forEach(message => {
 		if (messagesMap[message.user_psid] === undefined) {
 			messagesMap[message.user_psid] = [];
 		}

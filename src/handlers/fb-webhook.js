@@ -1,5 +1,7 @@
 const
-	{ sendReply } = require("../services/fb-messenger");
+	{ sendReply } = require("../services/fb-messenger"),
+	{ insertMessage } = require("../services/postgres/message"),
+	{ findDaysLeftTillNextBirthdayFromNow } = require("../utils/date-utils");
 
 async function verifyWebhook(req, res) {
 	const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
@@ -20,98 +22,111 @@ async function verifyWebhook(req, res) {
 }
 
 async function handleWebhook(req, res) {
-	let body = req.body;
+	let emergencyPsid;
+	try {
+		const body = req.body;
 
-	if (body.object === "page") {
-		body.entry.forEach(entry => {
-			let 
-				webhookEvent = entry.messaging[0],
-				senderPsid = webhookEvent.sender.id,
-				validEvent = false,
-				response = {};
+		if (body.object === "page") {
+			for (let i = 0; i < body.entry.length; i++) {
+				const entry = body.entry[i];
+				let 
+					webhookEvent = entry.messaging[0],
+					senderPsid = webhookEvent.sender.id,
+					validEvent = false,
+					response = {},
+					textToSave;
+				// console.log(webhookEvent, senderPsid);
 
-			if (webhookEvent.message && webhookEvent.message.text) {
-				const messageText = webhookEvent.message.text;
-				const regex = /^\d{4}-\d{2}-\d{2}$/;
-
-				if (messageText === "Hi") {
-					response.text = "What is your first name?";
-				} else if (messageText.match(regex) === null) {
-					response.text = "When is your birthday? please input in YYYY-MM-DD format";
-				} else {
-					const positive_response_payload = JSON.stringify({
-						"findNextDate": true,
-						"date": messageText
-					});
-					const negative_response_payload = JSON.stringify({
-						"findNextDate": false,
-					});
-					response = {
-						"attachment": {
-							"type": "template",
-							"payload": {
-								"template_type": "generic",
-								"elements": [{
-									"title": `Your Birthday is on ${messageText}`,
-									"subtitle": "Find your how long until your next birthday date?",
-									// "image_url": attachmentUrl,
-									"buttons": [
-										{
-											"type": "postback",
-											"title": "yes",
-											"payload": positive_response_payload,
-										},
-										{
-											"type": "postback",
-											"title": "no",
-											"payload": negative_response_payload,
-										}
-									],
-								}]
-							}
-						}
-					};
+				if (!webhookEvent.message || !webhookEvent.message.is_echo) {
+					emergencyPsid = senderPsid;
 				}
 
-				validEvent = true;
+				if (webhookEvent.message && webhookEvent.message.text && !webhookEvent.message.is_echo) {
+					const 
+						messageText = webhookEvent.message.text,
+						regex = /^\d{4}-\d{2}-\d{2}$/;
 
-			} else if (webhookEvent.postback) {
-				const payload = JSON.parse(webhookEvent.postback.payload);
-				
-				if (!payload.findNextDate) {
-					response.text = "Goodbye👋";
-					
-				} else {
-					const
-						currDate = new Date(), 
-						dateArr = payload.date
-							.split("-")
-							.map(num => parseInt(num));
+					textToSave = messageText;
 
-					let birthDate = new Date(currDate.getFullYear(), dateArr[1] - 1, dateArr[2]);
-					
-					if (birthDate < currDate) {
-						birthDate = new Date(currDate.getFullYear() + 1, dateArr[1] - 1, dateArr[2]);
+					if (messageText === "Hi") {
+						response.text = "What is your first name?";
+					} else if (messageText.match(regex) === null) {
+						response.text = "When is your birth date? Please input in YYYY-MM-DD format";
+					} else {
+						const positive_response_payload = JSON.stringify({
+							"findNextDate": true,
+							"date": messageText,
+							"text": "yes"
+						});
+						const negative_response_payload = JSON.stringify({
+							"findNextDate": false,
+							"text": "no"
+						});
+						response = {
+							"attachment": {
+								"type": "template",
+								"payload": {
+									"template_type": "generic",
+									"elements": [{
+										"title": `Your birth date is on ${messageText}`,
+										"subtitle": "Find your how many days left until your next birthday?",
+										"buttons": [
+											{
+												"type": "postback",
+												"title": "yes",
+												"payload": positive_response_payload,
+											},
+											{
+												"type": "postback",
+												"title": "no",
+												"payload": negative_response_payload,
+											}
+										],
+									}]
+								}
+							}
+						};
 					}
 
-					const daysDiff = Math.ceil((birthDate - currDate)/(1000*60*60*24));
+					validEvent = true;
+
+				} else if (webhookEvent.postback && webhookEvent.postback.payload) {
+					const payload = JSON.parse(webhookEvent.postback.payload);
+
+					if (!payload.findNextDate) {
+						response.text = "Goodbye👋";
 					
-					response.text = `There are ${daysDiff} days left until your next birthday`;
-				}
+					} else if (payload.findNextDate) {
+						const daysLeft = findDaysLeftTillNextBirthdayFromNow(payload.date);
+					
+						response.text = `There are ${daysLeft} days left until your next birthday`;
+					}
 				
-				validEvent = true;
+					validEvent = true;
+					textToSave = payload.text;
+				}
+
+				if (validEvent) {
+					try {
+						await insertMessage(senderPsid, textToSave);
+						await sendReply(senderPsid, response);
+					} catch(err) { 
+						console.log(err);
+					}
+					break;
+				}
 			}
 
-			if (validEvent) {
-				sendReply(senderPsid, response)
-					.catch(err => {
-						console.log(err);
-					});
-			}
+			res.status(200).send("EVENT_RECEIVED");
+		} else {
+			res.sendStatus(404);
+		}
+	} catch (err) {
+		console.log(err);
+		await sendReply(emergencyPsid, {
+			"text": "Something wrong in previous message, please resend again"
 		});
 		res.status(200).send("EVENT_RECEIVED");
-	} else {
-		res.sendStatus(404);
 	}
 }
 

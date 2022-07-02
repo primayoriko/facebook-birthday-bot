@@ -10,6 +10,7 @@ module.exports = {
 	},
 	"rules": {
 		"no-console": "off",
+		"no-empty": "off",
 		"no-unused-vars": "warn",
 		"indent": [
 			"error",

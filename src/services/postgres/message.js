@@ -11,7 +11,18 @@ async function getMessages() {
 
 async function getMessageByID(id) {
 	const { rows } = await getMessageByIDFromDB(id);
-	return rows.length > 0 ? rows[0] : null;
+	
+	if (rows.length === 0) {
+		return null;
+	}
+	
+	const
+		message = rows[0], 
+		user = await getUserByPSID(message.user_psid);
+	
+	message.user_name = user.name;
+
+	return message;
 }
 
 async function getSummary() {
@@ -24,7 +35,7 @@ async function getSummary() {
 		if (messagesMap[message.user_psid] === undefined) {
 			messagesMap[message.user_psid] = [];
 		}
-		messagesMap[message.user_psid].push(message.text);
+		messagesMap[message.user_psid].push(message.message_text);
 	});
 
 	const summary = users.map(userData => {

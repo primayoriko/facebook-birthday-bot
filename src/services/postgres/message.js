@@ -40,13 +40,13 @@ async function getSummary() {
 	return summary;
 }
 
-async function insertMessage(messageText, userPsid) {
-	const { users } = await getUserByPSID(userPsid);
-	if (users.length === 0) {
+async function insertMessage(userPsid, messageText) {
+	const user = await getUserByPSID(userPsid);
+	if (user === null) {
 		const username = await getProfileName(userPsid);
-		insertUser(userPsid, username);
+		await insertUser(userPsid, username);
 	}
-	await insertMessageToDB(messageText, userPsid);
+	await insertMessageToDB(userPsid, messageText);
 }
 
 module.exports = {

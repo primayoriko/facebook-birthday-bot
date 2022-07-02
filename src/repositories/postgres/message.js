@@ -11,10 +11,10 @@ function getMessageByIDFromDB(id) {
 	);
 }
 
-function insertMessageToDB(messageText, userPsid) {
+function insertMessageToDB(userPsid, messageText) {
 	return db.query(
-		"INSERT INTO messages(text, user_psid) VALUES($1, $2)",
-		[messageText, userPsid]
+		"INSERT INTO messages(user_psid, message_text) VALUES($1, $2)",
+		[userPsid, messageText]
 	);
 }
 

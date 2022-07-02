@@ -1,7 +1,7 @@
 const
 	{ sendReply } = require("../services/fb-messenger");
 
-function verifyWebhook(req, res) {
+async function verifyWebhook(req, res) {
 	const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 
 	let 

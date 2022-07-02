@@ -6,6 +6,7 @@ const
 	express = require("express"),
 	{ urlencoded, json } = require("body-parser"),
 	addFBWebhookRoutes = require("./routes/fb-webhook"),
+	addMessageAPIRoutes = require("./routes/api/message"),
 	app = express();
 
 initWebhookAppServer(app);
@@ -15,13 +16,13 @@ async function initWebhookAppServer(app) {
 
 	app.use(json());
 
-	app.get("/healthcheck", function (_req, res) {
+	app.get("/healthcheck", function (req, res) {
 		res.send("Healthy");
 	});
 
 	addFBWebhookRoutes(app);
-    
-	// add API routes
+
+	addMessageAPIRoutes(app);
 
 	var listener = app.listen(process.env.PORT, function() {
 		console.log("Your app is listening on port " + listener.address().port);

@@ -1,7 +1,7 @@
 const db = require("../../db/postgres/index");
 
 migrateDB()
-	.then(_ => console.log("migrated successfully"))
+	.then(_ => console.log("migrated-up successfully"))
 	.catch(err => console.log(err));
 
 

@@ -12,7 +12,7 @@ async function migrateDB() {
 		createUsersTableQuery = 
             `CREATE TABLE IF NOT EXISTS users (
                 psid BIGINT NOT NULL UNIQUE,
-                name varchar(255) NOT NULL,
+                name VARCHAR(255) NOT NULL,
                 PRIMARY KEY(psid)
             )`,
 		createMessagesTableQuery = 

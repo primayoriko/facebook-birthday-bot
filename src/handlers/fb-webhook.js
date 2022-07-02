@@ -1,7 +1,8 @@
 const
-	{ sendReply } = require("../services/fb-messenger"),
+	{ sendReply } = require("../services/api/fb"),
 	{ insertMessage } = require("../services/postgres/message"),
-	{ findDaysLeftTillNextBirthdayFromNow } = require("../utils/date-utils");
+	{ findDaysLeftTillNextBirthdayFromNow, createFBGenericChatboxForAskNextBirthday }
+		= require("../utils/birthdate-utils");
 
 async function verifyWebhook(req, res) {
 	const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
@@ -53,39 +54,7 @@ async function handleWebhook(req, res) {
 					} else if (messageText.match(regex) === null) {
 						response.text = "When is your birth date? Please input in YYYY-MM-DD format";
 					} else {
-						const positive_response_payload = JSON.stringify({
-							"findNextDate": true,
-							"date": messageText,
-							"text": "yes"
-						});
-						const negative_response_payload = JSON.stringify({
-							"findNextDate": false,
-							"text": "no"
-						});
-						response = {
-							"attachment": {
-								"type": "template",
-								"payload": {
-									"template_type": "generic",
-									"elements": [{
-										"title": `Your birth date is on ${messageText}`,
-										"subtitle": "Find your how many days left until your next birthday?",
-										"buttons": [
-											{
-												"type": "postback",
-												"title": "yes",
-												"payload": positive_response_payload,
-											},
-											{
-												"type": "postback",
-												"title": "no",
-												"payload": negative_response_payload,
-											}
-										],
-									}]
-								}
-							}
-						};
+						response = createFBGenericChatboxForAskNextBirthday(messageText);
 					}
 
 					validEvent = true;

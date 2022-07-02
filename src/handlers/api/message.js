@@ -14,7 +14,7 @@ async function handleGetMessages(req, res) {
 async function handleGetMessageByID(req, res) {
 	try {
 		const 
-			messageId = +req.query.id,
+			messageId = +req.params.id,
 			message = await getMessageByID(messageId);
 
 		if (message === null) {

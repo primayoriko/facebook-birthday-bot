@@ -17,7 +17,9 @@ async function initWebhookAppServer(app) {
 	app.use(json());
 
 	app.get("/healthcheck", function (req, res) {
-		res.send("Healthy");
+		res.send({
+			status: "healthy"
+		});
 	});
 
 	addFBWebhookRoutes(app);

@@ -1,3 +1,5 @@
+require("dotenv").config({ path: `${__dirname}/../../../.env` });
+
 const db = require("../../db/postgres/index");
 
 migrateDB()
@@ -17,7 +19,7 @@ async function migrateDB() {
             `CREATE TABLE IF NOT EXISTS messages (
                 id serial PRIMARY KEY,
                 user_psid integer NOT NULL,
-                text TEXT NOT NULL,
+                message_text TEXT NOT NULL,
                 created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_psid) REFERENCES users(psid) ON DELETE CASCADE ON UPDATE CASCADE
             )`;

@@ -41,6 +41,13 @@ These are bot features that specified in specification
    
    ![get-summary](docs/get-summary.png)
 
+## Assumptions 
+-------
+
+These are the assumptions that being used because not specified in the specification
+
+1. The input for chat bot always valid and follow rules that mentioned above. So, as the consequences, for the implementation, not storing state about the chat progress, only the text history.
+
 ## Stack Used
 
 ### Application
@@ -60,6 +67,7 @@ These are bot features that specified in specification
 3. **dotenv** (v16.0.1)
 4. **express** (v4.18.1)
 5. **pg** (v8.7.3)
+6. **winston** (v3.8.1)
 
 #### Development Dependency
 -------
@@ -102,7 +110,10 @@ The application / server should be ready to use.
 ## Model Data Used
 -------
 
-Because it's in Javascript, actually data structures in the program is schemaless (just using JS object). However, based on the data representation on database, here are the data structures that being used.
+Because it's in Javascript, actually data structures in the program is schemaless (just using JS object). However, based on the data representation on database and API, here are the data structures that being used.
+
+### Datababse Table
+-------
 
 1. **users**
    ```
@@ -124,6 +135,39 @@ And this is the visualization of model using ERD.
 ![Model-ERD](docs/model-erd.png))
 
 So, `users` has one-to-many relationship with `messages`.
+
+### *Implicit* Response DTO 
+-------
+
+1. Get Messages
+   ```
+   [
+      {
+         id: number,
+         user_psid: number (PSID of the user),
+         message_text: string,
+         created_at: date
+      }
+   ]
+   ```
+2. Get Message By ID
+   ```
+   {
+      id: number,
+      user_psid: number (PSID of the user),
+      message_text: string,
+      created_at: date,
+      user_name: string (name of the user on the facebook)
+   }
+   ```
+3. Get Summary
+   ```
+   {
+      user: number (PSID of the user),
+      name: string (name of the user on the facebook),
+      messages: array of string (message text)
+   }
+   ```
 
 ## Tests
 -------

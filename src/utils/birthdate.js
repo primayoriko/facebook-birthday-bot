@@ -33,7 +33,7 @@ function createFBGenericChatboxForAskNextBirthday(birthDateText) {
 				"template_type": "generic",
 				"elements": [{
 					"title": `Your birth date is on ${birthDateText}`,
-					"subtitle": "Find your how many days left until your next birthday?",
+					"subtitle": "Find how many days left until your next birthday?",
 					"buttons": [
 						{
 							"type": "postback",

@@ -50,9 +50,9 @@ async function handleWebhook(req, res) {
 					textToSave = messageText;
 
 					if (messageText === "Hi") {
-						response.text = "What is your first name?";
+						response.text = "Hello, what is your first name?";
 					} else if (messageText.match(regex) === null) {
-						response.text = "When is your birth date? Please input in YYYY-MM-DD format";
+						response.text = "What a good name! When is your birth date? Please input it with YYYY-MM-DD format";
 					} else {
 						response = createFBGenericChatboxForAskNextBirthday(messageText);
 					}

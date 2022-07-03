@@ -1,8 +1,9 @@
 const
+	logger = require("../utils/logger"),
 	{ sendReply } = require("../services/api/fb"),
 	{ insertMessage } = require("../services/postgres/message"),
 	{ findDaysLeftTillNextBirthdayFromNow, createFBGenericChatboxForAskNextBirthday }
-		= require("../utils/birthdate-utils");
+		= require("../utils/birthdate");
 
 async function verifyWebhook(req, res) {
 	const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
@@ -14,8 +15,8 @@ async function verifyWebhook(req, res) {
 
 	if (mode && token) {
 		if (mode === "subscribe" && token === VERIFY_TOKEN) {
-			// console.log("WEBHOOK_VERIFIED");
-			res.status(200).send(challenge);
+			res.status(200)
+				.send(challenge);
 		} else {
 			res.sendStatus(403);
 		}
@@ -36,7 +37,6 @@ async function handleWebhook(req, res) {
 					validEvent = false,
 					response = {},
 					textToSave;
-				// console.log(webhookEvent, senderPsid);
 
 				if (!webhookEvent.message || !webhookEvent.message.is_echo) {
 					emergencyPsid = senderPsid;
@@ -80,22 +80,25 @@ async function handleWebhook(req, res) {
 						await insertMessage(senderPsid, textToSave);
 						await sendReply(senderPsid, response);
 					} catch(err) { 
-						console.log(err);
+						logger.error(err);
 					}
 					break;
 				}
 			}
 
-			res.status(200).send("EVENT_RECEIVED");
+			res.status(200)
+				.send("EVENT_RECEIVED");
 		} else {
+
 			res.sendStatus(404);
 		}
 	} catch (err) {
-		console.log(err);
+		logger.err(err);
 		await sendReply(emergencyPsid, {
 			"text": "Something wrong in previous message, please resend again"
 		});
-		res.status(200).send("EVENT_RECEIVED");
+		res.status(200)
+			.send("EVENT_RECEIVED");
 	}
 }
 

@@ -62,7 +62,7 @@ Used for testing, linting, and hot-restarting server / app.
 1. Install required applications that listed above.
 2. Prepare the database (and account) to be used.
 3. Setup for the messaging bot in Facebook, you can use [this](https://developers.facebook.com/docs/messenger-platform/getting-started/quick-start/) for reference.
-4. Create `.env` file in the root directory of the project. And fill the file with these contents.
+4. Create `.env` file in the root directory of the project. And fill the file with these contents (or just copy from `.env.example` file).
    ```
    SERVER_PORT=<>
 
@@ -78,7 +78,7 @@ Used for testing, linting, and hot-restarting server / app.
    change these `<>` values with desired unused and valid port number, DB and FB (`PAGE_ACCESS_TOKEN` & `VERIFY_TOKEN`) creds that you already created.
 5. Install libraries for the project using `npm install`.
 6. Migrate DB schema using `npm run reset-postgres` or `migrate-up-postgres`.
-7. Run app / server using `npm start`.
+7. Run app opr server using `npm start` for development or `npm run start-prod` for production.
 9. For exposing to the FB, you can use various ways, such as deploying the server or use `ngrok`.
 10. Set the webhook URL in FB page, for more detail, look at the reference on step number 3.
 
@@ -118,9 +118,9 @@ So far, the integration tests has been implemented for the API.
 ## What can be Improved / Implemented Next
 -------
 
-- [ ] Centralized log
-- [ ] More bot interraction
-- [ ] More intelligent bot, maybe using NLP 
+- [X] Centralized log
+- [ ] More bot interaction
+- [ ] More intelligent bot to recognize chat pattern, maybe using NLP 
 
 ## Contributor
 -------

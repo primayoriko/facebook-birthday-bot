@@ -15,15 +15,17 @@ function findDaysLeftTillNextBirthdayFromNow(birthDateText) {
 }
 
 function createFBGenericChatboxForAskNextBirthday(birthDateText) {
-	const positive_response_payload = JSON.stringify({
-		"findNextDate": true,
-		"date": birthDateText,
-		"text": "yes"
-	});
-	const negative_response_payload = JSON.stringify({
-		"findNextDate": false,
-		"text": "no"
-	});
+	const 
+		positive_response_payload = JSON.stringify({
+			"findNextDate": true,
+			"date": birthDateText,
+			"text": "yes"
+		}),
+		negative_response_payload = JSON.stringify({
+			"findNextDate": false,
+			"text": "no"
+		});
+
 	return {
 		"attachment": {
 			"type": "template",

@@ -3,8 +3,10 @@
 
 Facebook Messenger Bot that created using Javascript for asking question that related to birthday and can persist it's user message history in database.
 
-## Features
+## Features 
 -------
+
+These are bot features that specified in specification
 
 1. Rule-based Facebook (FB) Messenger Bot that stricly following these rules
    1. When a user starts a conversation, say `Hi` and then bot ask a few questions.
@@ -14,10 +16,21 @@ Facebook Messenger Bot that created using Javascript for asking question that re
         - If the user select **yes** to the last question, send him a message: 
         `There are <N> days left until your next birthday`.
         - If the user select **no**, just say: `Goodbye 👋`.
+  
+   ![show-birthday-flow](docs/example1.gif)
+   ![not-show-birthday-flow](docs/example2.gif)
+
 2. Saving message / chat from user into the database.
 3. Having API endpoints for accessing those saved messages.
    1. `/messages` that list all messages received from users
+   
+   ![get-messages-api](docs/get-messages.png)
+
    2. `/messages/:id` to view single message by its ID
+   
+   ![get-message-by-id-api](docs/get-message-by-id.png)
+   ![get-message-by-id-not-found-api](docs/get-message-by-id-not-found.png)
+
    3. `/summary` to view this data exact data
    ```
    [
@@ -25,6 +38,8 @@ Facebook Messenger Bot that created using Javascript for asking question that re
        { user: <user_psid>, name: <user_name>, messages: [<list_of_users_messages>] }
    ]
    ```
+   
+   ![get-summary](docs/get-summary.png)
 
 ## Stack Used
 

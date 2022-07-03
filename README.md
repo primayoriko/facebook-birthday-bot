@@ -115,6 +115,8 @@ Because it's in Javascript, actually data structures in the program is schemales
 ### Datababse Table
 -------
 
+These are tables configuration that also can be modified on `src/migrations/postgres/up.js`.
+
 1. **users**
    ```
    psid BIGINT NOT NULL UNIQUE,
